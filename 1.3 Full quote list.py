@@ -13,18 +13,28 @@ for index, line in enumerate(fp):
     else:
         quote += ' - ' + convert_string
         full_list.append(quote)
-print '(a)',full_list
+print '(a) Build a list of full quotes'
+for item in full_list:
+    print '"' + item + '"'
+
 
 # b
 def extract_word(fullquote):
+    """Extract words without repeating from full quotes"""
     word_list = re.findall("\w+", fullquote.lower())
-    print '(b)', word_list
+    merged_word_list = []
+    for word in word_list:
+        if word not in merged_word_list:
+            merged_word_list.append(word)
+    return merged_word_list
 
 
-extract_word("Two roads diverged in a wood, and I...I took the one less traveled by, and that has made all the difference. - Robert Frost")
+print '(b)', extract_word("Two roads diverged in a wood, and I...I took the has in the difference. - Robert Frost")
+
 
 # c
 def posting_list(fullquote):
+    """Build the postings-list dictionary for single quote"""
     posting_value = {}
     word_list = re.findall("\w+", fullquote.lower())
     dict_key = [word_list[0]]
@@ -43,26 +53,49 @@ def posting_list(fullquote):
     for i in range(len(dict_key)):
         posting_value[dict_key[i]] = dict_value[i]
     posting_list = {fullquote: posting_value}
-    print '(c)',posting_list
+    return posting_list
 
-
-posting_list("Two roadert Frost Frost Frost")
+"""Iterate through each quote"""
+full_posting_list = {}
+for quote in full_list:
+    full_posting_list.update(posting_list(quote))
+print '(c)', full_posting_list
 
 
 # d
 def reverse_posting(keyword,fullquote):
+    """Build the reverse postings-list dictionary for single word and single quote"""
     keyword = keyword.lower()
     word_list = re.findall("\w+", fullquote.lower())
     cnt = 0
     for i in range(len(word_list)):
         if keyword == word_list[i]:
             cnt += 1
-    dict_dict = {fullquote: cnt}
-    reverse_posting_list = {keyword: dict_dict}
-    print '(d)',reverse_posting_list
+    reverse_posting_dict_value = {fullquote: cnt}
+    if cnt == 0:
+        return 0
+    else:
+        return reverse_posting_dict_value
 
+full_word_list = []
+merged_full_word_list = []
+reverse_posting_dict = {}
+#Extract each word from each quote
+for quote in full_list:
+    full_word_list += extract_word(quote)
+#Create list of words without repeating them
+for word in full_word_list:
+    if word not in merged_full_word_list:
+        merged_full_word_list.append(word)
+#Go through each word and each quote to find the occurences of that word
+for key in merged_full_word_list:
+    full_reverse_posting_list_value = {}
+    for quote in full_list:
+        if reverse_posting(key, quote) != 0:
+            full_reverse_posting_list_value.update(reverse_posting(key, quote))
+    reverse_posting_dict[key] = full_reverse_posting_list_value
+print '(d)', reverse_posting_dict
 
-reverse_posting('frost', "Two roadert Frost Frost Frost")
 
 # e
 def TF_IDF(keyword,fullquote):
@@ -126,10 +159,10 @@ def single_TF_IDF(keyword):
                 break
     for i in range(len(dict_key)):
         single_dict[dict_key[i]] = dict_value[i]
-    print '(f)',single_dict
+    return single_dict
 
 
-single_TF_IDF('the')
+print '(f)',single_TF_IDF('Miss')
 
 # g
 def multiple_TF_IDF(keyword_list):
