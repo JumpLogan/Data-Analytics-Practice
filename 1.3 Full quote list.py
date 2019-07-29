@@ -192,5 +192,5 @@ def multiple_TF_IDF(keyword_list):
     return multiple_dict
 
 
-Test_wordlist = ['Picasso', 'actor', 'Miss']
+Test_wordlist = ['heart', 'mind']
 print '(g)', multiple_TF_IDF(Test_wordlist)
